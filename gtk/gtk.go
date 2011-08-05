@@ -1634,13 +1634,11 @@ func (v *GtkFileChooserWidget) GetFilename() string {
 // void gtk_file_chooser_set_extra_widget(GtkFileChooser* chooser, GtkWidget* extra_widget);
 // GtkWidget* gtk_file_chooser_get_extra_widget(GtkFileChooser* chooser);
 
-
 // void gtk_file_chooser_add_filter(GtkFileChooser* chooser, GtkFileFilter* filter);
 // void gtk_file_chooser_remove_filter(GtkFileChooser* chooser, GtkFileFilter* filter);
 // GSList* gtk_file_chooser_list_filters(GtkFileChooser* chooser);
 // void gtk_file_chooser_set_filter(GtkFileChooser* chooser, GtkFileFilter* filter);
 // GtkFileFilter* gtk_file_chooser_get_filter(GtkFileChooser* chooser);
-
 
 // gboolean gtk_file_chooser_add_shortcut_folder(GtkFileChooser* chooser, const char* folder, GError* *error);
 // gboolean gtk_file_chooser_remove_shortcut_folder(GtkFileChooser* chooser, const char* folder, GError* *error);
@@ -4064,7 +4062,6 @@ func (v *GtkMenuItem) SetUseUnderline(setting bool) {
 }
 // #define gtk_menu_item_right_justify(menu_item) gtk_menu_item_set_right_justified((menu_item), TRUE)
 
-
 //-----------------------------------------------------------------------
 // GtkCheckMenuItem
 //-----------------------------------------------------------------------
@@ -4573,7 +4570,6 @@ func (v *GtkTreeViewColumn) GetTitle() string {
 //gboolean gtk_tree_view_column_cell_get_position (GtkTreeViewColumn *tree_column, GtkCellRenderer *cell_renderer, gint *start_pos, gint *width);
 //void gtk_tree_view_column_queue_resize (GtkTreeViewColumn *tree_column);
 //GtkWidget *gtk_tree_view_column_get_tree_view (GtkTreeViewColumn *tree_column);
-
 
 //-----------------------------------------------------------------------
 // GtkTreeSelection
@@ -5930,18 +5926,18 @@ func SpinButtonNewWithRange(min, max, step float64) *GtkSpinButton {
 	)}}}
 }
 
-func (v *GtkSpinButton)SetRange(min, max float64) {
+func (v *GtkSpinButton) SetRange(min, max float64) {
 	C.gtk_spin_button_set_range(C.to_GtkSpinButton(v.Widget), C.gdouble(min), C.gdouble(max))
 }
 
-func (v *GtkSpinButton)GetValue() float64 {
+func (v *GtkSpinButton) GetValue() float64 {
 	return float64(C.gtk_spin_button_get_value(C.to_GtkSpinButton(v.Widget)))
 }
 
-func (v *GtkSpinButton)GetValueAsInt() int32 {
+func (v *GtkSpinButton) GetValueAsInt() int32 {
 	return int32(C.gtk_spin_button_get_value_as_int(C.to_GtkSpinButton(v.Widget)))
 }
 
-func (v *GtkSpinButton)SetValue(value float64) {
+func (v *GtkSpinButton) SetValue(value float64) {
 	C.gtk_spin_button_set_value(C.to_GtkSpinButton(v.Widget), C.gdouble(value))
 }

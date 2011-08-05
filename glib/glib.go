@@ -472,7 +472,6 @@ func (v *GObject) SetProperty(name string, val *GValue) {
 	C.g_object_set_property(C.to_GObject(v.Object), C.to_gcharptr(str), &val.Value)
 }
 
-
 func Utf8Validate(str []byte, len int, bar **byte) bool {
 	return gboolean2bool(C._g_utf8_validate(unsafe.Pointer(&str[0]),
 		C.int(len), unsafe.Pointer(bar)))

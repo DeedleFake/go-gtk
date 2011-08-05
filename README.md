@@ -89,7 +89,7 @@ GOAL:
     GtkScale: 90%
     GtkScrolledWindow: 50%
     GtkSeparator: 100%
-    GtkSpinButton: 0%
+    GtkSpinButton: 10%
     GtkStatusbar: 100%
     GtkTable: 100%
     GtkTextView: 10%

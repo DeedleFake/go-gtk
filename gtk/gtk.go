@@ -570,6 +570,7 @@ static GtkProgressBar* to_GtkProgressBar(GtkWidget* w) { return GTK_PROGRESS_BAR
 static GtkFixed* to_GtkFixed(GtkWidget* w) { return GTK_FIXED(w); }
 static GtkCheckMenuItem* to_GtkCheckMenuItem(GtkWidget* w) { return GTK_CHECK_MENU_ITEM(w); }
 static GtkMenu* to_GtkMenu(GtkWidget* w) { return GTK_MENU(w); }
+static GtkSpinButton* to_GtkSpinButton(GtkWidget *w) { return GTK_SPIN_BUTTON(w); }
 
 static GSList* to_gslist(void* gs) {
 	return (GSList*)gs;
@@ -5908,3 +5909,39 @@ func (v *GtkStatusIcon) GetIconName() string {
 //gchar *gtk_status_icon_get_tooltip_markup (GtkStatusIcon *status_icon);
 
 //guint32 gtk_status_icon_get_x11_window_id (GtkStatusIcon *status_icon);
+
+type GtkSpinButton struct {
+	GtkEntry
+}
+
+func SpinButton(adjustment *GtkAdjustment, climb_rate float64, digits uint32) *GtkSpinButton {
+	return &GtkSpinButton{GtkEntry{GtkWidget{C.gtk_spin_button_new(
+		adjustment.Adjustment,
+		C.gdouble(climb_rate),
+		C.guint(digits),
+	)}}}
+}
+
+func SpinButtonNewWithRange(min, max, step float64) *GtkSpinButton {
+	return &GtkSpinButton{GtkEntry{GtkWidget{C.gtk_spin_button_new_with_range(
+		C.gdouble(min),
+		C.gdouble(max),
+		C.gdouble(step),
+	)}}}
+}
+
+func (v *GtkSpinButton)SetRange(min, max float64) {
+	C.gtk_spin_button_set_range(C.to_GtkSpinButton(v.Widget), C.gdouble(min), C.gdouble(max))
+}
+
+func (v *GtkSpinButton)GetValue() float64 {
+	return float64(C.gtk_spin_button_get_value(C.to_GtkSpinButton(v.Widget)))
+}
+
+func (v *GtkSpinButton)GetValueAsInt() int32 {
+	return int32(C.gtk_spin_button_get_value_as_int(C.to_GtkSpinButton(v.Widget)))
+}
+
+func (v *GtkSpinButton)SetValue(value float64) {
+	C.gtk_spin_button_set_value(C.to_GtkSpinButton(v.Widget), C.gdouble(value))
+}

@@ -604,7 +604,6 @@ static GtkAlignment* to_GtkAlignment(GtkWidget* w) { return GTK_ALIGNMENT(w); }
 static GtkProgressBar* to_GtkProgressBar(GtkWidget* w) { return GTK_PROGRESS_BAR(w); }
 static GtkFixed* to_GtkFixed(GtkWidget* w) { return GTK_FIXED(w); }
 static GtkCheckMenuItem* to_GtkCheckMenuItem(GtkWidget* w) { return GTK_CHECK_MENU_ITEM(w); }
-static GtkMenu* to_GtkMenu(GtkWidget* w) { return GTK_MENU(w); }
 static GtkSpinButton* to_GtkSpinButton(GtkWidget *w) { return GTK_SPIN_BUTTON(w); }
 
 static GSList* to_gslist(void* gs) {

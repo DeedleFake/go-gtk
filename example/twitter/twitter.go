@@ -1,36 +1,40 @@
 package main
 
 import (
-	"github.com/mattn/go-gtk/gtk"
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/gdkpixbuf"
-	"http"
-	"json"
-	"bytes"
+	"github.com/mattn/go-gtk/gtk"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"strings"
 )
 
-func url2pixbuf(url string) *gdkpixbuf.GdkPixbuf {
+func readURL(url string) ([]byte, *http.Response) {
 	r, err := http.Get(url)
 	if err != nil {
-		return nil
+		return nil, nil
 	}
-	t := r.Header.Get("Content-Type")
-	b := make([]byte, r.ContentLength)
-	if _, err = io.ReadFull(r.Body, b); err != nil {
-		return nil
+	var b []byte
+	if b, err = ioutil.ReadAll(r.Body); err != nil {
+		return nil, nil
 	}
+	return b, r
+}
+
+func bytes2pixbuf(data []byte, typ string) *gdkpixbuf.GdkPixbuf {
 	var loader *gdkpixbuf.GdkPixbufLoader
-	if strings.Index(t, "jpeg") >= 0 {
+	if strings.Index(typ, "jpeg") >= 0 {
 		loader, _ = gdkpixbuf.PixbufLoaderWithMimeType("image/jpeg")
 	} else {
 		loader, _ = gdkpixbuf.PixbufLoaderWithMimeType("image/png")
 	}
 	loader.SetSize(24, 24)
-	loader.Write(b)
+	loader.Write(data)
 	loader.Close()
 	return loader.GetPixbuf()
 }
@@ -72,19 +76,26 @@ func main() {
 					_, err = io.ReadFull(r.Body, b)
 				}
 				if err != nil {
-					println(err.String())
+					fmt.Println(err)
 					return
 				}
 				var j interface{}
-				json.NewDecoder(bytes.NewBuffer(b)).Decode(&j)
+				err = json.NewDecoder(bytes.NewBuffer(b)).Decode(&j)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
 				arr := j.([]interface{})
 				for i := 0; i < len(arr); i++ {
 					data := arr[i].(map[string]interface{})
 					icon := data["user"].(map[string]interface{})["profile_image_url"].(string)
 					var iter gtk.GtkTextIter
+					pixbufbytes, resp := readURL(icon)
 					gdk.ThreadsEnter()
-					buffer.GetStartIter(&iter)
-					buffer.InsertPixbuf(&iter, url2pixbuf(icon))
+					buffer.GetEndIter(&iter)
+					if resp != nil {
+						buffer.InsertPixbuf(&iter, bytes2pixbuf(pixbufbytes, resp.Header.Get("Content-Type")))
+					}
 					gdk.ThreadsLeave()
 					name := data["user"].(map[string]interface{})["screen_name"].(string)
 					text := data["text"].(string)
@@ -95,6 +106,8 @@ func main() {
 					gtk.MainIterationDo(false)
 					gdk.ThreadsLeave()
 				}
+			} else {
+				fmt.Println(err)
 			}
 			button.SetSensitive(true)
 		}()

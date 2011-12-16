@@ -46,32 +46,32 @@ static void _g_object_set_addr(gpointer object, const gchar *property_name, void
 	g_object_set(object, property_name, *(gpointer**)value, NULL);
 }
 //static void _g_object_get(gpointer object, const gchar *property_name, void* value) {
-//	g_object_get(object, property_name, value, NULL);
+//  g_object_get(object, property_name, value, NULL);
 //}
 
 static void g_value_init_int(GValue* gv) { g_value_init(gv, G_TYPE_INT); }
 static void g_value_init_string(GValue* gv) { g_value_init(gv, G_TYPE_STRING); }
 
 static GValue* init_gvalue_string_type() {
-  GValue* gv = g_new0(GValue, 1);
-  g_value_init(gv, G_TYPE_STRING);
-  return gv;
+	GValue* gv = g_new0(GValue, 1);
+	g_value_init(gv, G_TYPE_STRING);
+	return gv;
 }
 static GValue* init_gvalue_string(gchar* val) {
-  GValue* gv = init_gvalue_string_type();
-  g_value_set_string(gv, val);
-  return gv;
+	GValue* gv = init_gvalue_string_type();
+	g_value_set_string(gv, val);
+	return gv;
 }
 
 static GValue* init_gvalue_int_type() {
-  GValue* gv = g_new0(GValue, 1);
-  g_value_init(gv, G_TYPE_INT);
-  return gv;
+	GValue* gv = g_new0(GValue, 1);
+	g_value_init(gv, G_TYPE_INT);
+	return gv;
 }
 static GValue* init_gvalue_int(gint val) {
-  GValue* gv = init_gvalue_int_type();
-  g_value_set_int(gv, val);
-  return gv;
+	GValue* gv = init_gvalue_int_type();
+	g_value_set_int(gv, val);
+	return gv;
 }
 
 static GValue* init_gvalue_uint(guint val) { GValue* gv = g_new0(GValue, 1); g_value_init(gv, G_TYPE_UINT); g_value_set_uint(gv, val); return gv; }
@@ -87,6 +87,7 @@ typedef struct {
 	uintptr_t* args;
 	int args_no;
 	gboolean ret;
+	guint id;
 } callback_info;
 
 static uintptr_t callback_info_get_arg(callback_info* cbi, int idx) {
@@ -127,21 +128,19 @@ static callback_info* _g_signal_connect(void* obj, gchar* name, int func_no) {
 	cbi->args = NULL;
 	cbi->target = obj;
 	cbi->args_no = query.n_params;
-	g_signal_connect_data((gpointer)obj, name, G_CALLBACK(_callback), cbi, free_callback_info, G_CONNECT_SWAPPED);
+	cbi->id = g_signal_connect_data((gpointer)obj, name, G_CALLBACK(_callback), cbi, free_callback_info, G_CONNECT_SWAPPED);
 	return cbi;
+}
+static void _g_signal_emit_by_name(gpointer instance, const gchar *detailed_signal) {
+	g_signal_emit_by_name(instance, detailed_signal);
 }
 */
 // #cgo pkg-config: glib-2.0 gobject-2.0
 import "C"
 import "unsafe"
 import "reflect"
-import "container/vector"
 
-var callback_contexts *vector.Vector
-
-func init() {
-	callback_contexts = new(vector.Vector)
-}
+var callback_contexts []*CallbackContext
 
 func bool2gboolean(b bool) C.gboolean {
 	if b {
@@ -646,7 +645,7 @@ func (c *CallbackContext) Args(n int) uintptr {
 //export _go_glib_callback
 func _go_glib_callback(pcbi unsafe.Pointer) {
 	cbi := (*C.callback_info)(pcbi)
-	context := callback_contexts.At(int(cbi.func_no)).(*CallbackContext)
+	context := callback_contexts[int(cbi.func_no)]
 	rf := reflect.ValueOf(context.f)
 	t := rf.Type()
 	fargs := make([]reflect.Value, t.NumIn())
@@ -668,6 +667,18 @@ func (v *GObject) Connect(s string, f interface{}, datas ...interface{}) {
 	ctx := &CallbackContext{f, nil, reflect.ValueOf(v), reflect.ValueOf(data)}
 	ptr := C.CString(s)
 	defer C.free_string(ptr)
-	ctx.cbi = unsafe.Pointer(C._g_signal_connect(unsafe.Pointer(v.Object), C.to_gcharptr(ptr), C.int(callback_contexts.Len())))
-	callback_contexts.Push(ctx)
+	ctx.cbi = unsafe.Pointer(C._g_signal_connect(unsafe.Pointer(v.Object), C.to_gcharptr(ptr), C.int(len(callback_contexts))))
+	callback_contexts = append(callback_contexts, ctx)
+}
+
+func (v *GObject) StopEmission(s string) {
+	ptr := C.CString(s)
+	defer C.free_string(ptr)
+	C.g_signal_stop_emission_by_name((C.gpointer)(v.Object), C.to_gcharptr(ptr))
+}
+
+func (v *GObject) Emit(s string) {
+	ptr := C.CString(s)
+	defer C.free_string(ptr)
+	C._g_signal_emit_by_name((C.gpointer)(v.Object), C.to_gcharptr(ptr))
 }

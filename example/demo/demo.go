@@ -1,10 +1,10 @@
 package main
 
 import (
-	"os"
-	"github.com/mattn/go-gtk/glib"
-	"github.com/mattn/go-gtk/gtk"
 	"github.com/mattn/go-gtk/gdkpixbuf"
+	"github.com/mattn/go-gtk/glib"
+	"github.com/mattn/gtk"
+	"os"
 	"path"
 )
 
@@ -290,7 +290,8 @@ func main() {
 			"David Roundy <roundyd@physics.oregonstate.edu>",
 			"Mark Andrew Gerads",
 			"Tobias Kortkamp",
-			"Mikhail Trushnikov"})
+			"Mikhail Trushnikov",
+			"Federico Sogaro <soggof@gmail.com>"})
 		dir, _ := path.Split(os.Args[0])
 		imagefile := path.Join(dir, "../../data/mattn-logo.png")
 		pixbuf, _ := gdkpixbuf.PixbufFromFile(imagefile)

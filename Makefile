@@ -8,6 +8,7 @@ all:
 	cd gdk && gomake
 	cd gdkpixbuf && gomake
 	cd gtk && gomake
+	cd gtksourceview && gomake
 
 install:
 	cd pango && gomake install
@@ -15,6 +16,7 @@ install:
 	cd gdk && gomake install
 	cd gdkpixbuf && gomake install
 	cd gtk && gomake install
+	cd gtksourceview && gomake install
 
 clean:
 	cd pango && gomake clean
@@ -22,11 +24,13 @@ clean:
 	cd gdk && gomake clean
 	cd gdkpixbuf && gomake clean
 	cd gtk && gomake clean
+	cd gtksourceview && gomake clean
 	cd example && gomake clean
 
 fmt_all:
 	gofmt -w ./gdk/gdk.go
 	gofmt -w ./gtk/gtk.go
+	gofmt -w ./gtksourceview/gtksourceview.go
 	gofmt -w ./gdkpixbuf/gdkpixbuf.go
 	gofmt -w ./glib/glib.go
 	gofmt -w ./pango/pango.go

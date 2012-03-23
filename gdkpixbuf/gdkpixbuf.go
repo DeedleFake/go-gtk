@@ -50,6 +50,7 @@ func PixbufFromFile(path string) (pixbuf *GdkPixbuf, err **glib.Error) {
 func GetGdkPixbufType() int {
 	return int(C.gdk_pixbuf_get_type())
 }
+
 //-----------------------------------------------------------------------
 // GdkPixbufAnimation
 //-----------------------------------------------------------------------
@@ -111,6 +112,7 @@ func (v GdkPixbufLoader) Close() (ret bool, err *C.GError) {
 	err = error
 	return
 }
+
 //func (v GdkPixbufLoader) GetPixbufAnimation() *GdkPixbufAnimation {
 //	return &GdkPixbufAnimation {
 //		C.gdk_pixbuf_loader_get_animation(v.PixbufLoader) };
@@ -122,4 +124,5 @@ func (v GdkPixbufLoader) GetFormat() *GdkPixbufFormat {
 	return &GdkPixbufFormat{
 		C.gdk_pixbuf_loader_get_format(v.PixbufLoader)}
 }
+
 // FINISH

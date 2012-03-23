@@ -1,13 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/garyburd/go-oauth"
+	"github.com/garyburd/go-twitterstream"
 	"github.com/mattn/go-gtk/gdk"
 	"github.com/mattn/go-gtk/gdkpixbuf"
 	"github.com/mattn/go-gtk/gtk"
-	"github.com/garyburd/go-oauth"
-	"github.com/garyburd/go-twitterstream"
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -62,7 +62,7 @@ type tweet struct {
 		UserMentions []struct {
 			Indices    [2]int
 			ScreenName string `json:"screen_name"`
-		}    `json:"user_mentions"`
+		} `json:"user_mentions"`
 		Urls []struct {
 			Indices     [2]int
 			Url         string
